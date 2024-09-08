@@ -6,8 +6,16 @@
 //
 
 import UIKit
+import Combine
 
 class MainViewController: UIViewController {
+
+    // MARK: - Properties
+
+    private var viewModel: MainScreenViewModelProtocol = MainScreenViewModel()
+    private var cancellables = Set<AnyCancellable>()
+
+    private var dataSource: UICollectionViewDiffableDataSource<Int, PhotoModel>!
 
     // MARK: - UI Elements
 
@@ -20,6 +28,7 @@ class MainViewController: UIViewController {
 
     private lazy var imageCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createListLayout())
+        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "ImageCollectionViewCell")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -30,6 +39,9 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        subscribeToViewModel()
+        configureDataSource()
+        viewModel.loadData()
     }
 }
 
@@ -55,12 +67,48 @@ private extension MainViewController {
         ])
     }
 
+    // MARK: - Binding
+
+    private func subscribeToViewModel() {
+        viewModel.photosPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] photos in
+                self?.updateSnapshot(with: photos)
+            }
+            .store(in: &cancellables)
+    }
+
     // MARK: - Layout Configuration
 
-    func createListLayout() -> UICollectionViewFlowLayout {
+    private func createListLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: view.bounds.width - 20, height: 100)
+        let width = view.bounds.width - 20
+        let height = width * 2 / 3
+        layout.itemSize = CGSize(width: width, height: height)
         layout.minimumLineSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         return layout
+    }
+}
+
+// MARK: - DiffableDataSource Extension
+
+private extension MainViewController {
+
+    func configureDataSource() {
+        dataSource = UICollectionViewDiffableDataSource<Int, PhotoModel>(collectionView: imageCollectionView) { (collectionView, indexPath, photoModel) -> UICollectionViewCell? in
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionViewCell", for: indexPath) as? ImageCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(with: photoModel)
+            return cell
+        }
+    }
+
+    func updateSnapshot(with photos: [PhotoModel]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, PhotoModel>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(photos)
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
