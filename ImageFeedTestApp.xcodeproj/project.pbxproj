@@ -12,6 +12,7 @@
 		E2D7CD0E2C8DEF3B00821746 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD0D2C8DEF3B00821746 /* MainViewController.swift */; };
 		E2D7CD132C8DEF3C00821746 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2D7CD122C8DEF3C00821746 /* Assets.xcassets */; };
 		E2D7CD162C8DEF3C00821746 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = E2D7CD152C8DEF3C00821746 /* Base */; };
+		E2D7CD212C8DF93E00821746 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD202C8DF93E00821746 /* ImageCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		E2D7CD122C8DEF3C00821746 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E2D7CD152C8DEF3C00821746 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E2D7CD172C8DEF3C00821746 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E2D7CD202C8DF93E00821746 /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,14 +56,39 @@
 		E2D7CD082C8DEF3B00821746 /* ImageFeedTestApp */ = {
 			isa = PBXGroup;
 			children = (
-				E2D7CD092C8DEF3B00821746 /* AppDelegate.swift */,
-				E2D7CD0B2C8DEF3B00821746 /* SceneDelegate.swift */,
-				E2D7CD0D2C8DEF3B00821746 /* MainViewController.swift */,
+				E2D7CD1D2C8DF80100821746 /* MainScreen */,
+				E2D7CD1E2C8DF87700821746 /* App */,
 				E2D7CD122C8DEF3C00821746 /* Assets.xcassets */,
 				E2D7CD142C8DEF3C00821746 /* LaunchScreen.storyboard */,
 				E2D7CD172C8DEF3C00821746 /* Info.plist */,
 			);
 			path = ImageFeedTestApp;
+			sourceTree = "<group>";
+		};
+		E2D7CD1D2C8DF80100821746 /* MainScreen */ = {
+			isa = PBXGroup;
+			children = (
+				E2D7CD1F2C8DF90700821746 /* Cell */,
+				E2D7CD0D2C8DEF3B00821746 /* MainViewController.swift */,
+			);
+			path = MainScreen;
+			sourceTree = "<group>";
+		};
+		E2D7CD1E2C8DF87700821746 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				E2D7CD092C8DEF3B00821746 /* AppDelegate.swift */,
+				E2D7CD0B2C8DEF3B00821746 /* SceneDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E2D7CD1F2C8DF90700821746 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				E2D7CD202C8DF93E00821746 /* ImageCollectionViewCell.swift */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,6 +163,7 @@
 			files = (
 				E2D7CD0E2C8DEF3B00821746 /* MainViewController.swift in Sources */,
 				E2D7CD0A2C8DEF3B00821746 /* AppDelegate.swift in Sources */,
+				E2D7CD212C8DF93E00821746 /* ImageCollectionViewCell.swift in Sources */,
 				E2D7CD0C2C8DEF3B00821746 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
