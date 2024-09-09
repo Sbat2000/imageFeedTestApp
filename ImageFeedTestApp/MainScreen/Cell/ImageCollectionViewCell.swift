@@ -11,10 +11,24 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
     // MARK: - UI Elements
 
+    private lazy var polaroidView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 8
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.3
+        view.layer.shadowOffset = CGSize(width: 0, height: 2)
+        view.layer.shadowRadius = 4
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 6
+        imageView.layer.masksToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -23,6 +37,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .darkGray
+        label.textAlignment = .center
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -55,19 +70,27 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 private extension ImageCollectionViewCell {
 
     func setupUI() {
-        contentView.addSubview(imageView)
-        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(polaroidView)
+        polaroidView.addSubview(imageView)
+        polaroidView.addSubview(descriptionLabel)
     }
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            polaroidView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            polaroidView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            polaroidView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            polaroidView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+
+            imageView.topAnchor.constraint(equalTo: polaroidView.topAnchor, constant: 8),
+            imageView.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: 8),
+            imageView.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -8),
+            imageView.heightAnchor.constraint(equalTo: polaroidView.heightAnchor, multiplier: 0.75),
 
             descriptionLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            descriptionLabel.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: 8),
+            descriptionLabel.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -8),
+            descriptionLabel.bottomAnchor.constraint(equalTo: polaroidView.bottomAnchor, constant: -8)
         ])
     }
 }
