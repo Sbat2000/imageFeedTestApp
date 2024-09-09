@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E286A5672C8F12BE003FF67B /* NetworkTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A5662C8F12BE003FF67B /* NetworkTask.swift */; };
 		E2D7CD0A2C8DEF3B00821746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD092C8DEF3B00821746 /* AppDelegate.swift */; };
 		E2D7CD0C2C8DEF3B00821746 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD0B2C8DEF3B00821746 /* SceneDelegate.swift */; };
 		E2D7CD0E2C8DEF3B00821746 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD0D2C8DEF3B00821746 /* MainViewController.swift */; };
@@ -15,9 +16,12 @@
 		E2D7CD212C8DF93E00821746 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD202C8DF93E00821746 /* ImageCollectionViewCell.swift */; };
 		E2D7CD232C8DFC4900821746 /* MainScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD222C8DFC4900821746 /* MainScreenViewModel.swift */; };
 		E2D7CD252C8DFC6E00821746 /* PhotoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD242C8DFC6E00821746 /* PhotoModel.swift */; };
+		E2D7CD282C8F0E9400821746 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD272C8F0E9400821746 /* NetworkClient.swift */; };
+		E2D7CD2A2C8F104600821746 /* URLRequest + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD292C8F104600821746 /* URLRequest + Ext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E286A5662C8F12BE003FF67B /* NetworkTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTask.swift; sourceTree = "<group>"; };
 		E2D7CD062C8DEF3B00821746 /* ImageFeedTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeedTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2D7CD092C8DEF3B00821746 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2D7CD0B2C8DEF3B00821746 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -28,6 +32,8 @@
 		E2D7CD202C8DF93E00821746 /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		E2D7CD222C8DFC4900821746 /* MainScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenViewModel.swift; sourceTree = "<group>"; };
 		E2D7CD242C8DFC6E00821746 /* PhotoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoModel.swift; sourceTree = "<group>"; };
+		E2D7CD272C8F0E9400821746 /* NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
+		E2D7CD292C8F104600821746 /* URLRequest + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest + Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +66,7 @@
 		E2D7CD082C8DEF3B00821746 /* ImageFeedTestApp */ = {
 			isa = PBXGroup;
 			children = (
+				E2D7CD262C8F0CEE00821746 /* NetworkLayer */,
 				E2D7CD1D2C8DF80100821746 /* MainScreen */,
 				E2D7CD1E2C8DF87700821746 /* App */,
 				E2D7CD122C8DEF3C00821746 /* Assets.xcassets */,
@@ -95,6 +102,16 @@
 				E2D7CD202C8DF93E00821746 /* ImageCollectionViewCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		E2D7CD262C8F0CEE00821746 /* NetworkLayer */ = {
+			isa = PBXGroup;
+			children = (
+				E2D7CD272C8F0E9400821746 /* NetworkClient.swift */,
+				E2D7CD292C8F104600821746 /* URLRequest + Ext.swift */,
+				E286A5662C8F12BE003FF67B /* NetworkTask.swift */,
+			);
+			path = NetworkLayer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,9 +185,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2D7CD252C8DFC6E00821746 /* PhotoModel.swift in Sources */,
+				E2D7CD2A2C8F104600821746 /* URLRequest + Ext.swift in Sources */,
 				E2D7CD0E2C8DEF3B00821746 /* MainViewController.swift in Sources */,
 				E2D7CD232C8DFC4900821746 /* MainScreenViewModel.swift in Sources */,
+				E286A5672C8F12BE003FF67B /* NetworkTask.swift in Sources */,
 				E2D7CD0A2C8DEF3B00821746 /* AppDelegate.swift in Sources */,
+				E2D7CD282C8F0E9400821746 /* NetworkClient.swift in Sources */,
 				E2D7CD212C8DF93E00821746 /* ImageCollectionViewCell.swift in Sources */,
 				E2D7CD0C2C8DEF3B00821746 /* SceneDelegate.swift in Sources */,
 			);
