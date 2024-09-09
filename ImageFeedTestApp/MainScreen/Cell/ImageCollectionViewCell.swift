@@ -44,6 +44,9 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
     func configure(with photoModel: PhotoModel) {
         descriptionLabel.text = photoModel.description
+        guard let urlString = photoModel.urls?.small else { return }
+        guard let urlImage = URL(string: urlString) else { return }
+        setImage(for: imageView, url: urlImage)
     }
 }
 
@@ -68,5 +71,41 @@ private extension ImageCollectionViewCell {
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
         ])
+    }
+}
+
+// MARK: load image
+
+private extension ImageCollectionViewCell {
+    func loadImage(for url: URL) async throws -> UIImage {
+        let urlRequest = URLRequest(url: url)
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+
+        guard let response = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+
+        guard response.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        guard let image = UIImage(data: data) else {
+            throw URLError(.cannotDecodeContentData)
+        }
+
+        return image
+    }
+
+
+    func setImage(for imageView: UIImageView, url: URL) {
+        Task {
+            do {
+                let image = try await loadImage(for: url)
+                imageView.image = image
+            } catch {
+                print(error.localizedDescription)
+                imageView.image = nil
+            }
+        }
     }
 }
