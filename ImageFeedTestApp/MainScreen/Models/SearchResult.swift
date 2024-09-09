@@ -19,6 +19,8 @@ struct PhotoModel: Codable, Hashable, Identifiable {
     let description: String?
     let altDescription: String?
     let createdAt: Date?
+    let width: Int?
+    let height: Int?
     let urls: Urls?
 
     struct Urls: Codable, Hashable {

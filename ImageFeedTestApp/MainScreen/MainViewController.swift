@@ -27,7 +27,7 @@ class MainViewController: UIViewController {
     }()
 
     private lazy var imageCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createListLayout())
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
         collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "ImageCollectionViewCell")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
@@ -48,7 +48,7 @@ class MainViewController: UIViewController {
 // MARK: - Private methods
 
 private extension MainViewController {
-    
+
     func setupUI() {
         view.addSubview(searchBar)
         view.addSubview(imageCollectionView)
@@ -69,25 +69,43 @@ private extension MainViewController {
 
     // MARK: - Binding
 
-    private func subscribeToViewModel() {
-        viewModel.photosPublisher
+    func subscribeToViewModel() {
+        viewModel.sectionsPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] photos in
-                self?.updateSnapshot(with: photos)
+            .sink { [weak self] sections in
+                self?.updateSnapshot(with: sections)
             }
             .store(in: &cancellables)
     }
 
     // MARK: - Layout Configuration
 
-    private func createListLayout() -> UICollectionViewFlowLayout {
-        let layout = UICollectionViewFlowLayout()
-        let width = view.bounds.width - 20
-        let height = width * 2 / 3
-        layout.itemSize = CGSize(width: width, height: height)
-        layout.minimumLineSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        return layout
+    func createCompositionalLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { [weak self] (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+            guard let self = self else { return nil }
+            guard let sectionModel = self.viewModel.section(at: sectionIndex) else { return nil }
+
+            let itemHeights = sectionModel.itemHeights
+
+            let items: [NSCollectionLayoutItem] = itemHeights.map { height in
+                let itemSize = NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: .absolute(height)
+                )
+                return NSCollectionLayoutItem(layoutSize: itemSize)
+            }
+
+            let groupSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .estimated(itemHeights.reduce(0, +))
+            )
+            let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: items)
+
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 10
+
+            return section
+        }
     }
 }
 
@@ -105,10 +123,12 @@ private extension MainViewController {
         }
     }
 
-    func updateSnapshot(with photos: [PhotoModel]) {
+    func updateSnapshot(with sections: [SectionModel]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, PhotoModel>()
-        snapshot.appendSections([0])
-        snapshot.appendItems(photos)
+        for (sectionIndex, section) in sections.enumerated() {
+            snapshot.appendSections([sectionIndex])
+            snapshot.appendItems(section.items)
+        }
         dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
