@@ -77,6 +77,7 @@ private extension ImageCollectionViewCell {
 // MARK: load image
 
 private extension ImageCollectionViewCell {
+
     func loadImage(for url: URL) async throws -> UIImage {
         let urlRequest = URLRequest(url: url)
         let (data, response) = try await URLSession.shared.data(for: urlRequest)

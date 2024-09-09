@@ -46,7 +46,6 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
                 let photoModels = searchResult.results.map { $0 }
                 DispatchQueue.main.async {
                     self?.photos = photoModels
-                    print(self?.photos)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
