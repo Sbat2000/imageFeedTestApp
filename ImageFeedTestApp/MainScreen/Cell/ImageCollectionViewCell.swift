@@ -44,7 +44,6 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
     func configure(with photoModel: PhotoModel) {
         descriptionLabel.text = photoModel.description
-        imageView.image = .init(systemName: photoModel.image)
     }
 }
 

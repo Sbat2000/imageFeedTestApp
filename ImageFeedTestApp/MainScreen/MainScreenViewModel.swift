@@ -11,16 +11,27 @@ import Foundation
 
 protocol MainScreenViewModelProtocol {
     var photosPublisher: Published<[PhotoModel]>.Publisher { get }
-    func loadData()
+    func loadData(query: String)
 }
 
 // MARK: - ViewModel
 
 final class MainScreenViewModel: MainScreenViewModelProtocol {
 
+
     // MARK: - Published Properties
 
     @Published private var photos: [PhotoModel] = []
+
+    // MARK: - Properties
+
+    private let searchService: SearchServiceProtocol
+
+    // MARK: - Life Cycle
+
+    init(searchService: SearchServiceProtocol = SearchService(networkClient: DefaultNetworkClient())) {
+        self.searchService = searchService
+    }
 
     // MARK: - Public Methods
 
@@ -28,11 +39,18 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
         $photos
     }
 
-    func loadData() {
-        photos = [
-            PhotoModel(id: UUID(), description: "Mock Photo 1", image: "sun.max"),
-            PhotoModel(id: UUID(), description: "Mock Photo 2", image: "sun.min"),
-            PhotoModel(id: UUID(), description: "Mock Photo 3", image: "sun.max.circle.fill")
-        ]
+    func loadData(query: String) {
+        searchService.searchImages(query: query, page: 1) { [weak self] result in
+            switch result {
+            case .success(let searchResult):
+                let photoModels = searchResult.results.map { $0 }
+                DispatchQueue.main.async {
+                    self?.photos = photoModels
+                    print(self?.photos)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
 }

@@ -41,7 +41,7 @@ class MainViewController: UIViewController {
         setupConstraints()
         subscribeToViewModel()
         configureDataSource()
-        viewModel.loadData()
+        viewModel.loadData(query: "dog")
     }
 }
 

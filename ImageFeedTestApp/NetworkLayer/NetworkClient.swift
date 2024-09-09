@@ -14,14 +14,14 @@ enum NetworkClientError: Error {
     case parsingError
 }
 
-protocol NetworkClient {
+protocol NetworkClientProtocol {
     @discardableResult
     func send<T: Decodable>(request: NetworkRequest,
                             type: T.Type,
                             onResponse: @escaping (Result<T, Error>) -> Void) -> NetworkTask?
 }
 
-struct DefaultNetworkClient: NetworkClient {
+struct DefaultNetworkClient: NetworkClientProtocol {
     private let session: URLSession
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
@@ -72,6 +72,12 @@ struct DefaultNetworkClient: NetworkClient {
         var urlRequest = URLRequest(url: endpoint)
         urlRequest.httpMethod = request.httpMethod.rawValue
 
+        if let headers = request.headers {
+            for (key, value) in headers {
+                urlRequest.setValue(value, forHTTPHeaderField: key)
+            }
+        }
+
         if let dto = request.dto,
            let dtoEncoded = try? encoder.encode(dto) {
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -83,7 +89,10 @@ struct DefaultNetworkClient: NetworkClient {
 
     private func parse<T: Decodable>(data: Data, type: T.Type, onResponse: @escaping (Result<T, Error>) -> Void) {
         do {
-            let response = try decoder.decode(T.self, from: data)
+            let decoderResponse = decoder
+            decoderResponse.keyDecodingStrategy = .convertFromSnakeCase
+            decoderResponse.dateDecodingStrategy = .iso8601
+            let response = try decoderResponse.decode(T.self, from: data)
             onResponse(.success(response))
         } catch {
             onResponse(.failure(NetworkClientError.parsingError))
