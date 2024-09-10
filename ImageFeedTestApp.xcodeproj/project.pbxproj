@@ -11,6 +11,7 @@
 		E286A56A2C8F196F003FF67B /* UnsplashSearchRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A5692C8F196F003FF67B /* UnsplashSearchRequest.swift */; };
 		E286A56D2C8F19BE003FF67B /* SearchImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A56C2C8F19BE003FF67B /* SearchImageService.swift */; };
 		E286A5702C8F1A15003FF67B /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A56F2C8F1A15003FF67B /* SearchResult.swift */; };
+		E286A5722C909F52003FF67B /* SearchHistoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A5712C909F52003FF67B /* SearchHistoryService.swift */; };
 		E2D7CD0A2C8DEF3B00821746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD092C8DEF3B00821746 /* AppDelegate.swift */; };
 		E2D7CD0C2C8DEF3B00821746 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD0B2C8DEF3B00821746 /* SceneDelegate.swift */; };
 		E2D7CD0E2C8DEF3B00821746 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD0D2C8DEF3B00821746 /* MainViewController.swift */; };
@@ -27,6 +28,7 @@
 		E286A5692C8F196F003FF67B /* UnsplashSearchRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsplashSearchRequest.swift; sourceTree = "<group>"; };
 		E286A56C2C8F19BE003FF67B /* SearchImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchImageService.swift; sourceTree = "<group>"; };
 		E286A56F2C8F1A15003FF67B /* SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
+		E286A5712C909F52003FF67B /* SearchHistoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHistoryService.swift; sourceTree = "<group>"; };
 		E2D7CD062C8DEF3B00821746 /* ImageFeedTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeedTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2D7CD092C8DEF3B00821746 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2D7CD0B2C8DEF3B00821746 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				E286A56C2C8F19BE003FF67B /* SearchImageService.swift */,
+				E286A5712C909F52003FF67B /* SearchHistoryService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 			files = (
 				E2D7CD2A2C8F104600821746 /* URLRequest + Ext.swift in Sources */,
 				E286A56D2C8F19BE003FF67B /* SearchImageService.swift in Sources */,
+				E286A5722C909F52003FF67B /* SearchHistoryService.swift in Sources */,
 				E2D7CD0E2C8DEF3B00821746 /* MainViewController.swift in Sources */,
 				E286A56A2C8F196F003FF67B /* UnsplashSearchRequest.swift in Sources */,
 				E2D7CD232C8DFC4900821746 /* MainScreenViewModel.swift in Sources */,

@@ -11,6 +11,7 @@ import UIKit
 
 protocol MainScreenViewModelProtocol {
     var sectionsPublisher: Published<[SectionModel]>.Publisher { get }
+    var searchHistoryPublisher: Published<[String]>.Publisher { get }
     var searchText: String { get set }
     func searchButtonTapped()
     func section(at index: Int) -> SectionModel?
@@ -27,27 +28,41 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
 
     // MARK: - Published Properties
 
-    @Published private var sections: [SectionModel] = []
+    @Published private(set) var sections: [SectionModel] = []
+    @Published private(set) var searchHistory: [String] = []
+
+
+    var sectionsPublisher: Published<[SectionModel]>.Publisher { $sections }
+    var searchHistoryPublisher: Published<[String]>.Publisher { $searchHistory }
+
+    // MARK: - public properties
+
     var searchText: String = ""
 
-    // MARK: - Properties
+    // MARK: - private properties
 
     private let searchService: SearchServiceProtocol
+    private let searchHistoryService: SearchHistoryServiceProtocol
 
     // MARK: - Life Cycle
 
-    init(searchService: SearchServiceProtocol = SearchService(networkClient: DefaultNetworkClient())) {
+    init(
+        searchService: SearchServiceProtocol = SearchService(networkClient: DefaultNetworkClient()),
+        searchHistoryService: SearchHistoryServiceProtocol = SearchHistoryService()
+    ) {
         self.searchService = searchService
+        self.searchHistoryService = searchHistoryService
+        loadSearchHistory()
     }
 
     // MARK: - Public Methods
 
-    var sectionsPublisher: Published<[SectionModel]>.Publisher {
-        $sections
-    }
-
     func searchButtonTapped() {
         guard !searchText.isEmpty else { return }
+
+        searchHistoryService.saveSearchQuery(searchText)
+        loadSearchHistory()
+
         loadData(query: searchText)
     }
 
@@ -102,5 +117,9 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
                 print(error.localizedDescription)
             }
         }
+    }
+
+    private func loadSearchHistory() {
+        searchHistory = searchHistoryService.fetchSearchHistory()
     }
 }
