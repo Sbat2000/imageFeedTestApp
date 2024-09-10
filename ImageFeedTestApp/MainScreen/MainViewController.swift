@@ -16,6 +16,8 @@ class MainViewController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
 
     private var dataSource: UICollectionViewDiffableDataSource<Int, PhotoModel>!
+    private var suggestionsDataSource: UITableViewDiffableDataSource<Int, String>!
+    private var suggestionsTableHeightConstraint: NSLayoutConstraint?
 
     // MARK: - UI Elements
 
@@ -43,6 +45,18 @@ class MainViewController: UIViewController {
         return segmentedControl
     }()
 
+    private lazy var suggestionsTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SuggestionCell")
+        tableView.backgroundColor = .systemBackground
+        tableView.delegate = self
+        tableView.layer.masksToBounds = true
+        tableView.layer.cornerRadius = 10
+        tableView.isHidden = true
+        return tableView
+    }()
+
     // MARK: - LifeCycle
 
     override func viewDidLoad() {
@@ -50,7 +64,8 @@ class MainViewController: UIViewController {
         setupUI()
         setupConstraints()
         subscribeToViewModel()
-        configureDataSource()
+        configureImageCollectionViewDataSource()
+        configureSuggestionsDataSource()
     }
 }
 
@@ -63,6 +78,7 @@ private extension MainViewController {
         view.addSubview(searchBar)
         view.addSubview(layoutSegmentedControl)
         view.addSubview(imageCollectionView)
+        view.addSubview(suggestionsTableView)
     }
 
     func setupConstraints() {
@@ -78,8 +94,15 @@ private extension MainViewController {
             imageCollectionView.topAnchor.constraint(equalTo: layoutSegmentedControl.bottomAnchor, constant: 10),
             imageCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            imageCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            imageCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            suggestionsTableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 5),
+            suggestionsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
+            suggestionsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
+            suggestionsTableView.heightAnchor.constraint(lessThanOrEqualToConstant: 300)
         ])
+        suggestionsTableHeightConstraint = suggestionsTableView.heightAnchor.constraint(equalToConstant: 0)
+        suggestionsTableHeightConstraint?.isActive = true
     }
 
     // MARK: - Binding
@@ -88,7 +111,7 @@ private extension MainViewController {
         viewModel.sectionsPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] sections in
-                self?.updateSnapshot(with: sections)
+                self?.updateImageCollectionViewSnapshot(with: sections)
             }
             .store(in: &cancellables)
     }
@@ -163,11 +186,11 @@ private extension MainViewController {
     }
 }
 
-// MARK: - DiffableDataSource Extension
+// MARK: - CollectionViewDiffableDataSource Extension
 
 private extension MainViewController {
 
-    func configureDataSource() {
+    func configureImageCollectionViewDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Int, PhotoModel>(collectionView: imageCollectionView) { (collectionView, indexPath, photoModel) -> UICollectionViewCell? in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionViewCell", for: indexPath) as? ImageCollectionViewCell else {
                 return UICollectionViewCell()
@@ -177,7 +200,7 @@ private extension MainViewController {
         }
     }
 
-    func updateSnapshot(with sections: [SectionModel]) {
+    func updateImageCollectionViewSnapshot(with sections: [SectionModel]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, PhotoModel>()
         for (sectionIndex, section) in sections.enumerated() {
             snapshot.appendSections([sectionIndex])
@@ -192,6 +215,24 @@ private extension MainViewController {
 extension MainViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         viewModel.searchText = searchText
+
+        let filteredHistory: [String]
+        if searchText.isEmpty {
+            filteredHistory = viewModel.searchHistory
+        } else {
+            filteredHistory = viewModel.searchHistory.filter { $0.lowercased().contains(searchText.lowercased()) }
+        }
+
+        updateSuggestionsSnapshot(with: filteredHistory)
+
+        suggestionsTableView.isHidden = filteredHistory.isEmpty
+    }
+
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        let history = viewModel.searchHistory
+        updateSuggestionsSnapshot(with: history)
+
+        suggestionsTableView.isHidden = history.isEmpty
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -201,5 +242,48 @@ extension MainViewController: UISearchBarDelegate {
         }
         viewModel.searchButtonTapped()
         searchBar.resignFirstResponder()
+    }
+}
+
+// MARK: - TableViewDiffableDataSource Extension
+
+private extension MainViewController {
+
+    func configureSuggestionsDataSource() {
+        suggestionsDataSource = UITableViewDiffableDataSource<Int, String>(tableView: suggestionsTableView) { (tableView, indexPath, suggestion) -> UITableViewCell? in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SuggestionCell", for: indexPath)
+            cell.textLabel?.text = suggestion
+            return cell
+        }
+    }
+
+    func updateSuggestionsSnapshot(with suggestions: [String]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, String>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(suggestions)
+
+        suggestionsDataSource.apply(snapshot, animatingDifferences: true)
+
+        let rowHeight: CGFloat = 44
+        let maxHeight: CGFloat = 220
+        let totalHeight = min(CGFloat(suggestions.count) * rowHeight, maxHeight)
+
+        suggestionsTableHeightConstraint?.constant = totalHeight
+
+        suggestionsTableView.isHidden = suggestions.isEmpty
+    }
+}
+
+
+extension MainViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let suggestion = suggestionsDataSource.itemIdentifier(for: indexPath) else { return }
+
+        searchBar.text = suggestion
+
+        suggestionsTableView.isHidden = true
+
+        viewModel.searchText = suggestion
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }

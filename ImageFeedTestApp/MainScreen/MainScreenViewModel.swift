@@ -11,7 +11,7 @@ import UIKit
 
 protocol MainScreenViewModelProtocol {
     var sectionsPublisher: Published<[SectionModel]>.Publisher { get }
-    var searchHistoryPublisher: Published<[String]>.Publisher { get }
+    var searchHistory: [String] { get }
     var searchText: String { get set }
     func searchButtonTapped()
     func section(at index: Int) -> SectionModel?
@@ -31,9 +31,7 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
     @Published private(set) var sections: [SectionModel] = []
     @Published private(set) var searchHistory: [String] = []
 
-
     var sectionsPublisher: Published<[SectionModel]>.Publisher { $sections }
-    var searchHistoryPublisher: Published<[String]>.Publisher { $searchHistory }
 
     // MARK: - public properties
 
