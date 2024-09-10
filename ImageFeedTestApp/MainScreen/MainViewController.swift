@@ -21,16 +21,25 @@ class MainViewController: UIViewController {
 
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
+        searchBar.backgroundImage = UIImage()
         searchBar.placeholder = "Type for search"
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
 
     private lazy var imageCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createTwoColumnsCompositionalLayout())
         collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "ImageCollectionViewCell")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
+    }()
+
+    private lazy var layoutSegmentedControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl(items: ["1 Column", "2 Columns"])
+        segmentedControl.selectedSegmentIndex = 1
+        segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        return segmentedControl
     }()
 
     // MARK: - LifeCycle
@@ -50,7 +59,9 @@ class MainViewController: UIViewController {
 private extension MainViewController {
 
     func setupUI() {
+        view.backgroundColor = .systemBackground
         view.addSubview(searchBar)
+        view.addSubview(layoutSegmentedControl)
         view.addSubview(imageCollectionView)
     }
 
@@ -60,7 +71,11 @@ private extension MainViewController {
             searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
             searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
 
-            imageCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 10),
+            layoutSegmentedControl.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 10),
+            layoutSegmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 18),
+            layoutSegmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -18),
+
+            imageCollectionView.topAnchor.constraint(equalTo: layoutSegmentedControl.bottomAnchor, constant: 10),
             imageCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -133,6 +148,17 @@ private extension MainViewController {
             section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
 
             return section
+        }
+    }
+
+    @objc private func layoutChanged(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            imageCollectionView.setCollectionViewLayout(createCompositionalLayout(), animated: true)
+        case 1:
+            imageCollectionView.setCollectionViewLayout(createTwoColumnsCompositionalLayout(), animated: true)
+        default:
+            break
         }
     }
 }
