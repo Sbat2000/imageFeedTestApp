@@ -11,7 +11,8 @@ import UIKit
 
 protocol MainScreenViewModelProtocol {
     var sectionsPublisher: Published<[SectionModel]>.Publisher { get }
-    func loadData(query: String)
+    var searchText: String { get set }
+    func searchButtonTapped()
     func section(at index: Int) -> SectionModel?
 }
 
@@ -27,6 +28,7 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
     // MARK: - Published Properties
 
     @Published private var sections: [SectionModel] = []
+    var searchText: String = ""
 
     // MARK: - Properties
 
@@ -44,21 +46,9 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
         $sections
     }
 
-    func loadData(query: String) {
-        searchService.searchImages(query: query, page: 1) { [weak self] result in
-            switch result {
-            case .success(let searchResult):
-                let photoModels = searchResult.results
-                let itemHeights = photoModels.map { self?.calculateCellHeight(for: $0) ?? 0 }
-                let section = SectionModel(items: photoModels, itemHeights: itemHeights)
-
-                DispatchQueue.main.async {
-                    self?.sections = [section]
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
+    func searchButtonTapped() {
+        guard !searchText.isEmpty else { return }
+        loadData(query: searchText)
     }
 
     func section(at index: Int) -> SectionModel? {
@@ -93,5 +83,24 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
         )
 
         return ceil(boundingBox.height)
+    }
+
+    //MARK: - private methods
+
+    private func loadData(query: String) {
+        searchService.searchImages(query: query, page: 1) { [weak self] result in
+            switch result {
+            case .success(let searchResult):
+                let photoModels = searchResult.results
+                let itemHeights = photoModels.map { self?.calculateCellHeight(for: $0) ?? 0 }
+                let section = SectionModel(items: photoModels, itemHeights: itemHeights)
+
+                DispatchQueue.main.async {
+                    self?.sections = [section]
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
 }

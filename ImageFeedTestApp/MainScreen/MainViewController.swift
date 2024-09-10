@@ -22,6 +22,7 @@ class MainViewController: UIViewController {
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.backgroundImage = UIImage()
+        searchBar.delegate = self
         searchBar.placeholder = "Type for search"
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
@@ -50,7 +51,6 @@ class MainViewController: UIViewController {
         setupConstraints()
         subscribeToViewModel()
         configureDataSource()
-        viewModel.loadData(query: "dog")
     }
 }
 
@@ -184,5 +184,22 @@ private extension MainViewController {
             snapshot.appendItems(section.items)
         }
         dataSource.apply(snapshot, animatingDifferences: true)
+    }
+}
+
+// MARK: - SearchBarDelegate
+
+extension MainViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel.searchText = searchText
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let query = searchBar.text, !query.isEmpty else {
+            searchBar.resignFirstResponder()
+            return
+        }
+        viewModel.searchButtonTapped()
+        searchBar.resignFirstResponder()
     }
 }
