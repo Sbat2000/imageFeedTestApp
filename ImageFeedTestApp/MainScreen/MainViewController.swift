@@ -25,7 +25,7 @@ class MainViewController: UIViewController {
         let searchBar = UISearchBar()
         searchBar.backgroundImage = UIImage()
         searchBar.delegate = self
-        searchBar.placeholder = "Type for search"
+        searchBar.placeholder = LocalizableStrings.searchPlaceholder
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
@@ -41,7 +41,7 @@ class MainViewController: UIViewController {
     }()
 
     private lazy var layoutSegmentedControl: UISegmentedControl = {
-        let segmentedControl = UISegmentedControl(items: ["1 Column", "2 Columns"])
+        let segmentedControl = UISegmentedControl(items: [LocalizableStrings.list, LocalizableStrings.grid])
         segmentedControl.selectedSegmentIndex = 1
         segmentedControl.addTarget(self, action: #selector(layoutChanged), for: .valueChanged)
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
@@ -51,7 +51,7 @@ class MainViewController: UIViewController {
     private lazy var suggestionsTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SuggestionCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.ReuseIdentifier.suggestionCellIdentifier)
         tableView.backgroundColor = .systemBackground
         tableView.delegate = self
         tableView.layer.masksToBounds = true

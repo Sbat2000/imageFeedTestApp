@@ -58,7 +58,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     // MARK: - Public methods
 
     func configure(with photoModel: PhotoModel) {
-        descriptionLabel.text = photoModel.description ?? "No description"
+        descriptionLabel.text = photoModel.description ?? LocalizableStrings.noDescription
         guard let urlString = photoModel.urls?.small else { return }
         guard let urlImage = URL(string: urlString) else { return }
         setImage(for: imageView, url: urlImage)
