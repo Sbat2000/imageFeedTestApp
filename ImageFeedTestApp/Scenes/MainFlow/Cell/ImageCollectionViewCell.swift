@@ -184,32 +184,17 @@ private extension ImageCollectionViewCell {
 
 private extension ImageCollectionViewCell {
 
-    func loadImage(for url: URL) async throws -> UIImage {
-        let urlRequest = URLRequest(url: url)
-        let (data, response) = try await URLSession.shared.data(for: urlRequest)
-
-        guard let response = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
-        }
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        guard let image = UIImage(data: data) else {
-            throw URLError(.cannotDecodeContentData)
-        }
-
-        return image
-    }
-
     func setImage(for imageView: UIImageView, url: URL) {
-        Task {
+        currentTask = Task {
             do {
-                let image = try await loadImage(for: url)
-                updateState(.content(image))
+                let image = try await ImageLoaderService.shared.loadImage(from: url)
+                await MainActor.run {
+                    updateState(.content(image))
+                }
             } catch {
-                updateState(.error("Failed to load image"))
+                await MainActor.run {
+                    updateState(.error("Failed to load image"))
+                }
             }
         }
     }

@@ -50,26 +50,11 @@ final class DetailViewModel: DetailViewModelProtocol {
 
         Task {
             do {
-                let image = try await loadImage(for: url)
+                let image = try await ImageLoaderService.shared.loadImage(from: url)
                 state = .content(image)
             } catch {
                 state = .error("Failed to load image")
             }
         }
-    }
-
-    private func loadImage(for url: URL) async throws -> UIImage {
-        let urlRequest = URLRequest(url: url)
-        let (data, response) = try await URLSession.shared.data(for: urlRequest)
-
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        guard let image = UIImage(data: data) else {
-            throw URLError(.cannotDecodeContentData)
-        }
-
-        return image
     }
 }
