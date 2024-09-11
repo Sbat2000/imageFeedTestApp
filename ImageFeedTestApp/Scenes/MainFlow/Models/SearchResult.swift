@@ -22,9 +22,16 @@ struct PhotoModel: Codable, Hashable, Identifiable {
     let width: Int?
     let height: Int?
     let urls: Urls?
+    let user: UserModel
 
     struct Urls: Codable, Hashable {
         let small: String?
         let full: String?
+    }
+
+    struct UserModel: Codable, Hashable {
+        let username: String?
+        let bio: String?
+        let location: String?
     }
 }

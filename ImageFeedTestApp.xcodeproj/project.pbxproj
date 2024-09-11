@@ -20,6 +20,9 @@
 		E286A5812C91B988003FF67B /* BaseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A5802C91B988003FF67B /* BaseCoordinator.swift */; };
 		E286A5832C91BA90003FF67B /* MainSceneFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A5822C91BA90003FF67B /* MainSceneFactory.swift */; };
 		E286A5852C91BABB003FF67B /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A5842C91BABB003FF67B /* MainCoordinator.swift */; };
+		E286A58E2C91C511003FF67B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A58D2C91C511003FF67B /* DetailViewController.swift */; };
+		E286A5912C91C582003FF67B /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A5902C91C582003FF67B /* DetailViewModel.swift */; };
+		E286A5952C91C63B003FF67B /* DetailSceneFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E286A5942C91C63B003FF67B /* DetailSceneFactory.swift */; };
 		E2D7CD0A2C8DEF3B00821746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD092C8DEF3B00821746 /* AppDelegate.swift */; };
 		E2D7CD0C2C8DEF3B00821746 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD0B2C8DEF3B00821746 /* SceneDelegate.swift */; };
 		E2D7CD0E2C8DEF3B00821746 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7CD0D2C8DEF3B00821746 /* MainViewController.swift */; };
@@ -46,6 +49,9 @@
 		E286A5802C91B988003FF67B /* BaseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCoordinator.swift; sourceTree = "<group>"; };
 		E286A5822C91BA90003FF67B /* MainSceneFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSceneFactory.swift; sourceTree = "<group>"; };
 		E286A5842C91BABB003FF67B /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
+		E286A58D2C91C511003FF67B /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		E286A5902C91C582003FF67B /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
+		E286A5942C91C63B003FF67B /* DetailSceneFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSceneFactory.swift; sourceTree = "<group>"; };
 		E2D7CD062C8DEF3B00821746 /* ImageFeedTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeedTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2D7CD092C8DEF3B00821746 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2D7CD0B2C8DEF3B00821746 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -140,6 +146,49 @@
 			path = Navigation;
 			sourceTree = "<group>";
 		};
+		E286A5892C91C4D6003FF67B /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				E2D7CD1D2C8DF80100821746 /* MainFlow */,
+				E286A58A2C91C4E1003FF67B /* DetailFlow */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		E286A58A2C91C4E1003FF67B /* DetailFlow */ = {
+			isa = PBXGroup;
+			children = (
+				E286A58F2C91C57A003FF67B /* ViewModel */,
+				E286A58C2C91C502003FF67B /* View */,
+				E286A58B2C91C4F2003FF67B /* Navigation */,
+			);
+			path = DetailFlow;
+			sourceTree = "<group>";
+		};
+		E286A58B2C91C4F2003FF67B /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				E286A5942C91C63B003FF67B /* DetailSceneFactory.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		E286A58C2C91C502003FF67B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E286A58D2C91C511003FF67B /* DetailViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E286A58F2C91C57A003FF67B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				E286A5902C91C582003FF67B /* DetailViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		E2D7CCFD2C8DEF3B00821746 = {
 			isa = PBXGroup;
 			children = (
@@ -159,9 +208,9 @@
 		E2D7CD082C8DEF3B00821746 /* ImageFeedTestApp */ = {
 			isa = PBXGroup;
 			children = (
+				E286A5892C91C4D6003FF67B /* Scenes */,
 				E286A57B2C91B832003FF67B /* NavigaionLayer */,
 				E2D7CD262C8F0CEE00821746 /* NetworkLayer */,
-				E2D7CD1D2C8DF80100821746 /* MainFlow */,
 				E286A5732C91A89A003FF67B /* Helpers */,
 				E286A56B2C8F199B003FF67B /* Services */,
 				E2D7CD1E2C8DF87700821746 /* App */,
@@ -286,11 +335,13 @@
 			files = (
 				E2D7CD2A2C8F104600821746 /* URLRequest + Ext.swift in Sources */,
 				E286A56D2C8F19BE003FF67B /* SearchImageService.swift in Sources */,
+				E286A5952C91C63B003FF67B /* DetailSceneFactory.swift in Sources */,
 				E286A57D2C91B8A2003FF67B /* CoordinatorProtocol.swift in Sources */,
 				E286A5722C909F52003FF67B /* SearchHistoryService.swift in Sources */,
 				E2D7CD0E2C8DEF3B00821746 /* MainViewController.swift in Sources */,
 				E286A56A2C8F196F003FF67B /* UnsplashSearchRequest.swift in Sources */,
 				E286A5812C91B988003FF67B /* BaseCoordinator.swift in Sources */,
+				E286A58E2C91C511003FF67B /* DetailViewController.swift in Sources */,
 				E2D7CD232C8DFC4900821746 /* MainScreenViewModel.swift in Sources */,
 				E286A5672C8F12BE003FF67B /* NetworkTask.swift in Sources */,
 				E286A5752C91A8A6003FF67B /* Constants.swift in Sources */,
@@ -299,6 +350,7 @@
 				E2D7CD282C8F0E9400821746 /* NetworkClient.swift in Sources */,
 				E2D7CD212C8DF93E00821746 /* ImageCollectionViewCell.swift in Sources */,
 				E286A5852C91BABB003FF67B /* MainCoordinator.swift in Sources */,
+				E286A5912C91C582003FF67B /* DetailViewModel.swift in Sources */,
 				E286A5702C8F1A15003FF67B /* SearchResult.swift in Sources */,
 				E286A57F2C91B8F3003FF67B /* AppCoordinator.swift in Sources */,
 				E286A5832C91BA90003FF67B /* MainSceneFactory.swift in Sources */,

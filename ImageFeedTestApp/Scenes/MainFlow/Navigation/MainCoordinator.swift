@@ -14,7 +14,8 @@ protocol MainCoordinatorProtocol: BaseCoordinator {
 final class MainCoordinator: BaseCoordinator, MainCoordinatorProtocol {
 
     func showDetailView(for photo: PhotoModel) {
-        print(photo.description)
+        let detailViewController = DetailSceneFactory.makeDetailViewController(for: photo)
+        navigationController.pushViewController(detailViewController, animated: true)
     }
     
     override func start() {
