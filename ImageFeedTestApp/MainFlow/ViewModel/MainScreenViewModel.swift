@@ -45,8 +45,8 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
     // MARK: - Life Cycle
 
     init(
-        searchService: SearchServiceProtocol = SearchService(networkClient: DefaultNetworkClient()),
-        searchHistoryService: SearchHistoryServiceProtocol = SearchHistoryService()
+        searchService: SearchServiceProtocol,
+        searchHistoryService: SearchHistoryServiceProtocol
     ) {
         self.searchService = searchService
         self.searchHistoryService = searchHistoryService

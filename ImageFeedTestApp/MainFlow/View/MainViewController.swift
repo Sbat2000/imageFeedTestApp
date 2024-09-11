@@ -12,7 +12,7 @@ class MainViewController: UIViewController {
 
     // MARK: - Properties
 
-    private var viewModel: MainScreenViewModelProtocol = MainScreenViewModel()
+    private var viewModel: MainScreenViewModelProtocol
     private var cancellables = Set<AnyCancellable>()
 
     private var dataSource: UICollectionViewDiffableDataSource<Int, PhotoModel>!
@@ -69,6 +69,15 @@ class MainViewController: UIViewController {
         subscribeToViewModel()
         configureImageCollectionViewDataSource()
         configureSuggestionsDataSource()
+    }
+
+    init(viewModel: MainScreenViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
