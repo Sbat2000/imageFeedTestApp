@@ -32,7 +32,10 @@ class MainViewController: UIViewController {
 
     private lazy var imageCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createTwoColumnsCompositionalLayout())
-        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "ImageCollectionViewCell")
+        collectionView.register(
+            ImageCollectionViewCell.self,
+            forCellWithReuseIdentifier: Constants.ReuseIdentifier.imageCellIdentifier
+        )
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -83,23 +86,23 @@ private extension MainViewController {
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.Layout.padding),
+            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.Layout.padding),
+            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.Layout.padding),
 
-            layoutSegmentedControl.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 10),
-            layoutSegmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 18),
-            layoutSegmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -18),
+            layoutSegmentedControl.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: Constants.Layout.padding),
+            layoutSegmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.Layout.segmentedControlInset),
+            layoutSegmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.Layout.segmentedControlInset),
 
-            imageCollectionView.topAnchor.constraint(equalTo: layoutSegmentedControl.bottomAnchor, constant: 10),
+            imageCollectionView.topAnchor.constraint(equalTo: layoutSegmentedControl.bottomAnchor, constant: Constants.Layout.padding),
             imageCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             suggestionsTableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 5),
-            suggestionsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
-            suggestionsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
-            suggestionsTableView.heightAnchor.constraint(lessThanOrEqualToConstant: 300)
+            suggestionsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Layout.segmentedControlInset),
+            suggestionsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Layout.segmentedControlInset),
+            suggestionsTableView.heightAnchor.constraint(lessThanOrEqualToConstant: Constants.Layout.maxSuggestionTableHeight)
         ])
         suggestionsTableHeightConstraint = suggestionsTableView.heightAnchor.constraint(equalToConstant: 0)
         suggestionsTableHeightConstraint?.isActive = true
@@ -140,7 +143,7 @@ private extension MainViewController {
             let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: items)
 
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 10
+            section.interGroupSpacing = Constants.Layout.padding
 
             return section
         }
@@ -167,7 +170,7 @@ private extension MainViewController {
             )
 
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 10
+            section.interGroupSpacing = Constants.Layout.padding
             section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
 
             return section
@@ -192,7 +195,10 @@ private extension MainViewController {
 
     func configureImageCollectionViewDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Int, PhotoModel>(collectionView: imageCollectionView) { (collectionView, indexPath, photoModel) -> UICollectionViewCell? in
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionViewCell", for: indexPath) as? ImageCollectionViewCell else {
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: Constants.ReuseIdentifier.imageCellIdentifier,
+                for: indexPath
+            ) as? ImageCollectionViewCell else {
                 return UICollectionViewCell()
             }
             cell.configure(with: photoModel)
@@ -251,7 +257,10 @@ private extension MainViewController {
 
     func configureSuggestionsDataSource() {
         suggestionsDataSource = UITableViewDiffableDataSource<Int, String>(tableView: suggestionsTableView) { (tableView, indexPath, suggestion) -> UITableViewCell? in
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SuggestionCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: Constants.ReuseIdentifier.suggestionCellIdentifier,
+                for: indexPath
+            )
             cell.textLabel?.text = suggestion
             return cell
         }
@@ -264,8 +273,8 @@ private extension MainViewController {
 
         suggestionsDataSource.apply(snapshot, animatingDifferences: true)
 
-        let rowHeight: CGFloat = 44
-        let maxHeight: CGFloat = 220
+        let rowHeight: CGFloat = Constants.Layout.rowHeight
+        let maxHeight: CGFloat = Constants.Layout.maxSuggestionTableHeight
         let totalHeight = min(CGFloat(suggestions.count) * rowHeight, maxHeight)
 
         suggestionsTableHeightConstraint?.constant = totalHeight
