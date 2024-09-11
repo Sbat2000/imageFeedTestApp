@@ -42,7 +42,7 @@ class DetailViewController: UIViewController {
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16)
-        label.textColor = .black
+        label.textColor = .label
         label.textAlignment = .center
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -79,6 +79,9 @@ class DetailViewController: UIViewController {
 
     private lazy var saveButton: UIButton = {
         let button = UIButton(type: .system)
+        button.isEnabled = false
+        button.setTitleColor(.systemIndigo, for: .normal)
+        button.setTitleColor(.lightGray, for: .disabled)
         button.setTitle("Save Image", for: .normal)
         button.addTarget(self, action: #selector(saveImageTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -87,6 +90,9 @@ class DetailViewController: UIViewController {
 
     private lazy var shareButton: UIButton = {
         let button = UIButton(type: .system)
+        button.isEnabled = false
+        button.setTitleColor(.systemIndigo, for: .normal)
+        button.setTitleColor(.lightGray, for: .disabled)
         button.setTitle("Share Image", for: .normal)
         button.addTarget(self, action: #selector(shareImageTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -114,6 +120,7 @@ class DetailViewController: UIViewController {
 
     // MARK: - Private Methods
     private func setupUI() {
+        navigationController?.navigationBar.tintColor = .systemGray
         view.backgroundColor = .systemBackground
         view.addSubview(polaroidView)
         polaroidView.addSubview(photoImageView)
@@ -178,16 +185,22 @@ class DetailViewController: UIViewController {
             activityIndicator.startAnimating()
             photoImageView.isHidden = true
             errorLabel.isHidden = true
+            saveButton.isEnabled = false
+            shareButton.isEnabled = false
         case .content(let image):
             activityIndicator.stopAnimating()
             photoImageView.image = image
             photoImageView.isHidden = false
             errorLabel.isHidden = true
+            saveButton.isEnabled = true
+            shareButton.isEnabled = true
         case .error(let errorMessage):
             activityIndicator.stopAnimating()
             photoImageView.isHidden = true
             errorLabel.isHidden = false
             errorLabel.text = errorMessage
+            saveButton.isEnabled = false
+            shareButton.isEnabled = false
         }
     }
 
