@@ -77,20 +77,20 @@ private extension ImageCollectionViewCell {
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            polaroidView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            polaroidView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            polaroidView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            polaroidView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            polaroidView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.Layout.imageCellPadding),
+            polaroidView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.Layout.imageCellPadding),
+            polaroidView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.Layout.imageCellPadding),
+            polaroidView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Constants.Layout.imageCellPadding),
 
-            imageView.topAnchor.constraint(equalTo: polaroidView.topAnchor, constant: 8),
-            imageView.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: 8),
-            imageView.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -8),
-            imageView.heightAnchor.constraint(equalTo: polaroidView.heightAnchor, multiplier: 0.75),
+            imageView.topAnchor.constraint(equalTo: polaroidView.topAnchor, constant: Constants.Layout.imageCellPadding),
+            imageView.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: Constants.Layout.imageCellPadding),
+            imageView.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -Constants.Layout.imageCellPadding),
+            imageView.heightAnchor.constraint(equalTo: polaroidView.heightAnchor, multiplier: Constants.Layout.imageMultiplier),
 
-            descriptionLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
-            descriptionLabel.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: 8),
-            descriptionLabel.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -8),
-            descriptionLabel.bottomAnchor.constraint(equalTo: polaroidView.bottomAnchor, constant: -8)
+            descriptionLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: Constants.Layout.imageCellPadding),
+            descriptionLabel.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: Constants.Layout.imageCellPadding),
+            descriptionLabel.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -Constants.Layout.imageCellPadding),
+            descriptionLabel.bottomAnchor.constraint(equalTo: polaroidView.bottomAnchor, constant: -Constants.Layout.imageCellPadding)
         ])
     }
 }
