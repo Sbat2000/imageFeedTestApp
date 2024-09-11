@@ -21,4 +21,5 @@ struct LocalizableStrings {
     static let unknownLocation          = NSLocalizedString("unknownLocation", comment: "Unknown location")
     static let photoBy                  = NSLocalizedString("photoBy", comment: "Author name")
     static let from                     = NSLocalizedString("from", comment: "From")
+    static let dismissKeyboard          = NSLocalizedString("dismissKeyboard", comment: "Dismiss keyboard button tet")
 }

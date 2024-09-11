@@ -1,6 +1,23 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "dismissKeyboard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss Keyboard"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скрыть клавиатуру"
+          }
+        }
+      }
+    },
     "failedSaveImage" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -189,7 +206,15 @@
       }
     },
     "unknown" : {
-      "comment" : "Unknown author"
+      "comment" : "Unknown author",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "неизвестно"
+          }
+        }
+      }
     },
     "unknownAuthor" : {
       "extractionState" : "manual",

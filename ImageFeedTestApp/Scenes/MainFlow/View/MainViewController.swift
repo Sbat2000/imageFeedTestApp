@@ -26,6 +26,7 @@ class MainViewController: UIViewController {
         searchBar.backgroundImage = UIImage()
         searchBar.delegate = self
         searchBar.placeholder = LocalizableStrings.searchPlaceholder
+        searchBar.inputAccessoryView = toolbar
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
@@ -59,6 +60,25 @@ class MainViewController: UIViewController {
         tableView.layer.cornerRadius = 10
         tableView.isHidden = true
         return tableView
+    }()
+
+    private lazy var toolbar: UIToolbar = {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+
+        let cancelButton = UIBarButtonItem(
+            title: LocalizableStrings.dismissKeyboard,
+            style: .plain,
+            target: self,
+            action: #selector(dismissKeyboard)
+        )
+
+        cancelButton.tintColor = .systemGray
+
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+        toolbar.setItems([flexibleSpace, cancelButton], animated: false)
+        return toolbar
     }()
 
     // MARK: - LifeCycle
@@ -187,6 +207,8 @@ private extension MainViewController {
         }
     }
 
+    // MARK: - Actions
+
     @objc private func layoutChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
@@ -196,6 +218,11 @@ private extension MainViewController {
         default:
             break
         }
+    }
+
+    @objc private func dismissKeyboard() {
+        searchBar.resignFirstResponder()
+        suggestionsTableView.isHidden = true
     }
 }
 
