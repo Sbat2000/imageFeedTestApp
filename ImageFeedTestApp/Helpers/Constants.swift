@@ -17,6 +17,15 @@ struct Constants {
         static let rowHeight: CGFloat = 44
         static let maxSuggestionTableHeight: CGFloat = 220
         static let segmentedControlInset: CGFloat = 18
+
+        // MARK: - DetailView specific constants
+        
+        struct DetailView {
+            static let polaroidPadding: CGFloat = 16
+            static let buttonBottomPadding: CGFloat = 20
+            static let buttonSidePadding: CGFloat = 20
+            static let activityIndicatorSize: CGFloat = 50
+        }
     }
 
         // MARK: - Cells reuseIdentifier

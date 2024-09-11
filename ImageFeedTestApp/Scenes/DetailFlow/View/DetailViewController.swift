@@ -71,7 +71,7 @@ class DetailViewController: UIViewController {
         label.textColor = .red
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "Failed to load image"
+        label.text = LocalizableStrings.imageLoadFailed
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -82,7 +82,7 @@ class DetailViewController: UIViewController {
         button.isEnabled = false
         button.setTitleColor(.systemIndigo, for: .normal)
         button.setTitleColor(.lightGray, for: .disabled)
-        button.setTitle("Save Image", for: .normal)
+        button.setTitle(LocalizableStrings.saveImage, for: .normal)
         button.addTarget(self, action: #selector(saveImageTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -93,7 +93,7 @@ class DetailViewController: UIViewController {
         button.isEnabled = false
         button.setTitleColor(.systemIndigo, for: .normal)
         button.setTitleColor(.lightGray, for: .disabled)
-        button.setTitle("Share Image", for: .normal)
+        button.setTitle(LocalizableStrings.shareImage, for: .normal)
         button.addTarget(self, action: #selector(shareImageTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -137,24 +137,24 @@ class DetailViewController: UIViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            polaroidView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            polaroidView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            polaroidView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            polaroidView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -20),
+            polaroidView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.Layout.padding),
+            polaroidView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Layout.padding),
+            polaroidView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Layout.padding),
+            polaroidView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -Constants.Layout.DetailView.buttonBottomPadding),
 
-            photoImageView.topAnchor.constraint(equalTo: polaroidView.topAnchor, constant: 16),
-            photoImageView.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: 16),
-            photoImageView.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -16),
-            photoImageView.heightAnchor.constraint(equalTo: polaroidView.heightAnchor, multiplier: 0.6),
+            photoImageView.topAnchor.constraint(equalTo: polaroidView.topAnchor, constant: Constants.Layout.DetailView.polaroidPadding),
+            photoImageView.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: Constants.Layout.DetailView.polaroidPadding),
+            photoImageView.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -Constants.Layout.DetailView.polaroidPadding),
+            photoImageView.heightAnchor.constraint(equalTo: polaroidView.heightAnchor, multiplier: Constants.Layout.imageMultiplier),
 
-            descriptionLabel.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 8),
-            descriptionLabel.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: 16),
-            descriptionLabel.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -16),
+            descriptionLabel.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: Constants.Layout.imageCellPadding),
+            descriptionLabel.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: Constants.Layout.imageCellPadding),
+            descriptionLabel.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -Constants.Layout.imageCellPadding),
 
-            authorInfoLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
-            authorInfoLabel.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: 16),
-            authorInfoLabel.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -16),
-            authorInfoLabel.bottomAnchor.constraint(equalTo: polaroidView.bottomAnchor, constant: -16),
+            authorInfoLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: Constants.Layout.imageCellPadding),
+            authorInfoLabel.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: Constants.Layout.imageCellPadding),
+            authorInfoLabel.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -Constants.Layout.imageCellPadding),
+            authorInfoLabel.bottomAnchor.constraint(equalTo: polaroidView.bottomAnchor, constant: -Constants.Layout.imageCellPadding),
 
             activityIndicator.centerXAnchor.constraint(equalTo: polaroidView.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: polaroidView.centerYAnchor),
@@ -162,14 +162,13 @@ class DetailViewController: UIViewController {
             errorLabel.centerXAnchor.constraint(equalTo: polaroidView.centerXAnchor),
             errorLabel.centerYAnchor.constraint(equalTo: polaroidView.centerYAnchor),
 
-            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Layout.DetailView.buttonSidePadding),
+            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.Layout.DetailView.buttonBottomPadding),
 
-            shareButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            shareButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            shareButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Layout.DetailView.buttonSidePadding),
+            shareButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.Layout.DetailView.buttonBottomPadding)
         ])
     }
-
     private func bindViewModel() {
         viewModel.statePublisher
             .receive(on: DispatchQueue.main)
@@ -212,7 +211,7 @@ class DetailViewController: UIViewController {
     }
 
     @objc private func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        let alert = UIAlertController(title: nil, message: error == nil ? "Image saved successfully" : "Failed to save image", preferredStyle: .alert)
+        let alert = UIAlertController(title: nil, message: error == nil ? LocalizableStrings.imageSavedSuccessfully : LocalizableStrings.failedSaveImage, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }

@@ -33,13 +33,13 @@ final class DetailViewModel: DetailViewModelProtocol {
     }
 
     var descriptionText: String {
-        return photo.description ?? "No description available"
+        return photo.description ?? LocalizableStrings.noDescription
     }
 
     var authorInfoText: String {
-        let username = photo.user.username ?? "Unknown"
-        let location = photo.user.location ?? "Unknown Location"
-        return "Photo by \(username) from \(location)"
+        let username = photo.user.username ?? LocalizableStrings.unknownAuthor
+        let location = photo.user.location ?? LocalizableStrings.unknownLocation
+        return "\(LocalizableStrings.photoBy) \(username) \(LocalizableStrings.from)  \(location)"
     }
 
     func loadContent() {
