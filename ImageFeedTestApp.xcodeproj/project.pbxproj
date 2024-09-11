@@ -179,6 +179,7 @@
 				E286A5872C91BCC4003FF67B /* ViewModel */,
 				E286A56E2C8F1A08003FF67B /* Models */,
 				E2D7CD1F2C8DF90700821746 /* Cell */,
+				E286A5882C91BD0C003FF67B /* Navigation */,
 			);
 			path = MainFlow;
 			sourceTree = "<group>";
@@ -195,7 +196,6 @@
 		E2D7CD1F2C8DF90700821746 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				E286A5882C91BD0C003FF67B /* Navigation */,
 				E2D7CD202C8DF93E00821746 /* ImageCollectionViewCell.swift */,
 			);
 			path = Cell;

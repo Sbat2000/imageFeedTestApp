@@ -32,6 +32,7 @@ class MainViewController: UIViewController {
 
     private lazy var imageCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createTwoColumnsCompositionalLayout())
+        collectionView.delegate = self
         collectionView.register(
             ImageCollectionViewCell.self,
             forCellWithReuseIdentifier: Constants.ReuseIdentifier.imageCellIdentifier
@@ -222,6 +223,17 @@ private extension MainViewController {
             snapshot.appendItems(section.items)
         }
         dataSource.apply(snapshot, animatingDifferences: true)
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension MainViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let section = viewModel.section(at: 0) else { return }
+        let selectedPhoto = section.items[indexPath.row]
+
+        viewModel.didSelectPhoto(selectedPhoto)
     }
 }
 

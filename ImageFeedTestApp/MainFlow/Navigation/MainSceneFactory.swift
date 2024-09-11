@@ -14,7 +14,8 @@ struct MainSceneFactory {
 
         let viewModel = MainScreenViewModel(
             searchService: searchService,
-            searchHistoryService: searchHistoryService
+            searchHistoryService: searchHistoryService,
+            coordinator: coordinator
         )
 
         let viewController = MainViewController(viewModel: viewModel)

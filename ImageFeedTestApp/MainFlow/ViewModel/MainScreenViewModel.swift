@@ -14,6 +14,7 @@ protocol MainScreenViewModelProtocol {
     var searchHistory: [String] { get }
     var searchText: String { get set }
     func searchButtonTapped()
+    func didSelectPhoto(_ photo: PhotoModel)
     func section(at index: Int) -> SectionModel?
 }
 
@@ -41,15 +42,18 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
 
     private let searchService: SearchServiceProtocol
     private let searchHistoryService: SearchHistoryServiceProtocol
+    private weak var coordinator: MainCoordinatorProtocol?
 
     // MARK: - Life Cycle
 
     init(
         searchService: SearchServiceProtocol,
-        searchHistoryService: SearchHistoryServiceProtocol
+        searchHistoryService: SearchHistoryServiceProtocol,
+        coordinator: MainCoordinatorProtocol?
     ) {
         self.searchService = searchService
         self.searchHistoryService = searchHistoryService
+        self.coordinator = coordinator
         loadSearchHistory()
     }
 
@@ -67,6 +71,10 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
     func section(at index: Int) -> SectionModel? {
         guard index < sections.count else { return nil }
         return sections[index]
+    }
+
+    func didSelectPhoto(_ photo: PhotoModel) {
+        coordinator?.showDetailView(for: photo)
     }
 
     // MARK: - Calculate Cell Height
