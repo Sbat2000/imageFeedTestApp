@@ -9,6 +9,20 @@ import UIKit
 
 final class ImageCollectionViewCell: UICollectionViewCell {
 
+    // MARK: - Enum State
+
+    enum CellState {
+        case loading
+        case content(UIImage)
+        case error(String)
+    }
+
+    // MARK: - Properties
+
+    private var currentState: CellState = .loading
+    private var currentTask: Task<Void, Never>?
+    private var currentImageURL: URL?
+
     // MARK: - UI Elements
 
     private lazy var polaroidView: UIView = {
@@ -43,6 +57,23 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         return label
     }()
 
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+
+    private lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .red
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     // MARK: - Init
 
     override init(frame: CGRect) {
@@ -59,9 +90,55 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
     func configure(with photoModel: PhotoModel) {
         descriptionLabel.text = photoModel.description ?? LocalizableStrings.noDescription
-        guard let urlString = photoModel.urls?.small else { return }
-        guard let urlImage = URL(string: urlString) else { return }
-        setImage(for: imageView, url: urlImage)
+
+        guard let urlString = photoModel.urls?.small, let url = URL(string: urlString) else {
+            updateState(.error("Invalid image URL"))
+            return
+        }
+
+        if currentImageURL != url {
+            currentTask?.cancel()
+            currentImageURL = url
+            imageView.image = nil
+            updateState(.loading)
+            setImage(for: imageView, url: url)
+        }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        currentTask?.cancel()
+        currentTask = nil
+        currentImageURL = nil
+        imageView.image = nil
+        updateState(.loading)
+    }
+
+    // MARK: - State Update
+
+    private func updateState(_ state: CellState) {
+        currentState = state
+        switch state {
+        case .loading:
+            activityIndicator.startAnimating()
+            imageView.isHidden = true
+            errorLabel.isHidden = true
+            descriptionLabel.isHidden = true
+
+        case .content(let image):
+            activityIndicator.stopAnimating()
+            imageView.image = image
+            imageView.isHidden = false
+            errorLabel.isHidden = true
+            descriptionLabel.isHidden = false
+
+        case .error(let message):
+            activityIndicator.stopAnimating()
+            imageView.isHidden = true
+            errorLabel.text = message
+            errorLabel.isHidden = false
+            descriptionLabel.isHidden = true
+        }
     }
 }
 
@@ -73,6 +150,8 @@ private extension ImageCollectionViewCell {
         contentView.addSubview(polaroidView)
         polaroidView.addSubview(imageView)
         polaroidView.addSubview(descriptionLabel)
+        polaroidView.addSubview(activityIndicator)
+        polaroidView.addSubview(errorLabel)
     }
 
     func setupConstraints() {
@@ -90,7 +169,13 @@ private extension ImageCollectionViewCell {
             descriptionLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: Constants.Layout.imageCellPadding),
             descriptionLabel.leadingAnchor.constraint(equalTo: polaroidView.leadingAnchor, constant: Constants.Layout.imageCellPadding),
             descriptionLabel.trailingAnchor.constraint(equalTo: polaroidView.trailingAnchor, constant: -Constants.Layout.imageCellPadding),
-            descriptionLabel.bottomAnchor.constraint(equalTo: polaroidView.bottomAnchor, constant: -Constants.Layout.imageCellPadding)
+            descriptionLabel.bottomAnchor.constraint(equalTo: polaroidView.bottomAnchor, constant: -Constants.Layout.imageCellPadding),
+
+            activityIndicator.centerXAnchor.constraint(equalTo: polaroidView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: polaroidView.centerYAnchor),
+
+            errorLabel.centerXAnchor.constraint(equalTo: polaroidView.centerXAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: polaroidView.centerYAnchor)
         ])
     }
 }
@@ -118,15 +203,13 @@ private extension ImageCollectionViewCell {
         return image
     }
 
-
     func setImage(for imageView: UIImageView, url: URL) {
         Task {
             do {
                 let image = try await loadImage(for: url)
-                imageView.image = image
+                updateState(.content(image))
             } catch {
-                print(error.localizedDescription)
-                imageView.image = nil
+                updateState(.error("Failed to load image"))
             }
         }
     }
