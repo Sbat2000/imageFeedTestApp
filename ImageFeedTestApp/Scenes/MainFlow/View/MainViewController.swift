@@ -94,6 +94,7 @@ final class MainViewController: UIViewController {
         label.textColor = .systemRed
         label.numberOfLines = 0
         label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
