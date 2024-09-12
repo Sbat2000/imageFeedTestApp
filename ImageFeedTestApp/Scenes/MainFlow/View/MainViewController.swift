@@ -262,6 +262,17 @@ extension MainViewController: UICollectionViewDelegate {
 
         viewModel.didSelectPhoto(selectedPhoto)
     }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+
+        if offsetY > contentHeight - height * 2 {
+            guard let lastSection = viewModel.section(at: 0) else { return }
+            viewModel.loadNextPageIfNeeded(currentItemIndex: lastSection.items.count - 1)
+        }
+    }
 }
 
 // MARK: - SearchBarDelegate

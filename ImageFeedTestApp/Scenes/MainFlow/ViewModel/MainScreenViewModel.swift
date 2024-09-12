@@ -16,6 +16,7 @@ protocol MainScreenViewModelProtocol {
     func searchButtonTapped()
     func didSelectPhoto(_ photo: PhotoModel)
     func section(at index: Int) -> SectionModel?
+    func loadNextPageIfNeeded(currentItemIndex: Int)
 }
 
 struct SectionModel {
@@ -34,15 +35,19 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
 
     var sectionsPublisher: Published<[SectionModel]>.Publisher { $sections }
 
-    // MARK: - public properties
+    // MARK: - Public Properties
 
     var searchText: String = ""
 
-    // MARK: - private properties
+    // MARK: - Private Properties
 
     private let searchService: SearchServiceProtocol
     private let searchHistoryService: SearchHistoryServiceProtocol
     private weak var coordinator: MainCoordinatorProtocol?
+
+    private var currentPage: Int = 1
+    private var totalPages: Int = 1
+    private var isLoading: Bool = false
 
     // MARK: - Life Cycle
 
@@ -65,7 +70,9 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
         searchHistoryService.saveSearchQuery(searchText)
         loadSearchHistory()
 
-        loadData(query: searchText)
+        currentPage = 1
+        sections = []
+        loadData(query: searchText, page: currentPage)
     }
 
     func section(at index: Int) -> SectionModel? {
@@ -75,6 +82,18 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
 
     func didSelectPhoto(_ photo: PhotoModel) {
         coordinator?.showDetailView(for: photo)
+    }
+
+    func loadNextPageIfNeeded(currentItemIndex: Int) {
+        guard !isLoading,
+              currentPage < totalPages,
+              let section = sections.first else { return }
+
+        let thresholdIndex = section.items.count - 5
+        if currentItemIndex >= max(0, thresholdIndex) {
+            currentPage += 1
+            loadData(query: searchText, page: currentPage)
+        }
     }
 
     // MARK: - Calculate Cell Height
@@ -106,18 +125,24 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
         return ceil(boundingBox.height)
     }
 
-    //MARK: - private methods
+    //MARK: - Private Methods
 
-    private func loadData(query: String) {
-        searchService.searchImages(query: query, page: 1) { [weak self] result in
+    private func loadData(query: String, page: Int) {
+        isLoading = true
+
+        searchService.searchImages(query: query, page: page) { [weak self] result in
+            guard let self = self else { return }
+            self.isLoading = false
+
             switch result {
             case .success(let searchResult):
                 let photoModels = searchResult.results
-                let itemHeights = photoModels.map { self?.calculateCellHeight(for: $0) ?? 0 }
+                let itemHeights = photoModels.map { self.calculateCellHeight(for: $0) }
                 let section = SectionModel(items: photoModels, itemHeights: itemHeights)
 
                 DispatchQueue.main.async {
-                    self?.sections = [section]
+                    self.totalPages = searchResult.totalPages
+                    self.sections.append(section)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
