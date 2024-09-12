@@ -137,6 +137,23 @@
         }
       }
     },
+    "notFound" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No results found for"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ничего не найдено по запросу"
+          }
+        }
+      }
+    },
     "photoBy" : {
       "extractionState" : "manual",
       "localizations" : {
