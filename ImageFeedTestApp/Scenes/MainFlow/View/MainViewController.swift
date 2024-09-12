@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class MainViewController: UIViewController {
+final class MainViewController: UIViewController {
 
     // MARK: - Properties
 
@@ -81,6 +81,22 @@ class MainViewController: UIViewController {
         return toolbar
     }()
 
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+
+    private lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = .systemRed
+        label.numberOfLines = 0
+        label.isHidden = true
+        return label
+    }()
+
     // MARK: - LifeCycle
 
     override func viewDidLoad() {
@@ -112,6 +128,8 @@ private extension MainViewController {
         view.addSubview(layoutSegmentedControl)
         view.addSubview(imageCollectionView)
         view.addSubview(suggestionsTableView)
+        view.addSubview(activityIndicator)
+        view.addSubview(errorLabel)
     }
 
     func setupConstraints() {
@@ -129,6 +147,14 @@ private extension MainViewController {
             imageCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            errorLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            errorLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+
             suggestionsTableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 5),
             suggestionsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Layout.segmentedControlInset),
             suggestionsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Layout.segmentedControlInset),
@@ -141,12 +167,44 @@ private extension MainViewController {
     // MARK: - Binding
 
     func subscribeToViewModel() {
-        viewModel.sectionsPublisher
+        viewModel.statePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] sections in
-                self?.updateImageCollectionViewSnapshot(with: sections)
+            .sink { [weak self] state in
+                self?.handleState(state)
             }
             .store(in: &cancellables)
+    }
+
+    // MARK: - State 
+
+    private func handleState(_ state: MainViewState) {
+        switch state {
+        case .idle:
+            activityIndicator.stopAnimating()
+            errorLabel.isHidden = true
+            imageCollectionView.isHidden = true
+
+        case .loading:
+            activityIndicator.startAnimating()
+            errorLabel.isHidden = true
+            imageCollectionView.isHidden = true
+
+        case .loadingMore:
+            activityIndicator.stopAnimating()
+            errorLabel.isHidden = true
+
+        case .content(let sections):
+            activityIndicator.stopAnimating()
+            errorLabel.isHidden = true
+            imageCollectionView.isHidden = false
+            updateImageCollectionViewSnapshot(with: sections)
+
+        case .error(let message):
+            activityIndicator.stopAnimating()
+            errorLabel.text = message
+            errorLabel.isHidden = false
+            imageCollectionView.isHidden = true
+        }
     }
 
     // MARK: - Layout Configuration
@@ -261,12 +319,17 @@ extension MainViewController: UICollectionViewDelegate {
         let selectedPhoto = section.items[indexPath.row]
 
         viewModel.didSelectPhoto(selectedPhoto)
+        searchBar.resignFirstResponder()
+        suggestionsTableView.isHidden = true
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
+
+        searchBar.resignFirstResponder()
+        suggestionsTableView.isHidden = true
 
         if offsetY > contentHeight - height * 2 {
             guard let lastSection = viewModel.section(at: 0) else { return }

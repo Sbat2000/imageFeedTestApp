@@ -7,37 +7,42 @@
 
 import UIKit
 
-// MARK: - MainViewModelProtocol
-
-protocol MainScreenViewModelProtocol {
-    var sectionsPublisher: Published<[SectionModel]>.Publisher { get }
-    var searchHistory: [String] { get }
-    var searchText: String { get set }
-    func searchButtonTapped()
-    func didSelectPhoto(_ photo: PhotoModel)
-    func section(at index: Int) -> SectionModel?
-    func loadNextPageIfNeeded(currentItemIndex: Int)
-}
-
 struct SectionModel {
     let items: [PhotoModel]
     let itemHeights: [CGFloat]
 }
 
-// MARK: - ViewModel
+enum MainViewState {
+    case idle
+    case loading
+    case loadingMore
+    case content([SectionModel])
+    case error(String)
+}
+
+// MARK: - MainViewModelProtocol
+
+protocol MainScreenViewModelProtocol {
+    var statePublisher: Published<MainViewState>.Publisher { get }
+    var searchHistory: [String] { get }
+    var searchText: String { get set }
+    func searchButtonTapped()
+    func didSelectPhoto(_ photo: PhotoModel)
+    func loadNextPageIfNeeded(currentItemIndex: Int)
+    func section(at index: Int) -> SectionModel?
+}
 
 final class MainScreenViewModel: MainScreenViewModelProtocol {
 
     // MARK: - Published Properties
 
-    @Published private(set) var sections: [SectionModel] = []
-    @Published private(set) var searchHistory: [String] = []
-
-    var sectionsPublisher: Published<[SectionModel]>.Publisher { $sections }
+    @Published private(set) var state: MainViewState = .idle
+    var statePublisher: Published<MainViewState>.Publisher { $state }
 
     // MARK: - Public Properties
 
     var searchText: String = ""
+    var searchHistory: [String] = []
 
     // MARK: - Private Properties
 
@@ -48,6 +53,7 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
     private var currentPage: Int = 1
     private var totalPages: Int = 1
     private var isLoading: Bool = false
+    private var sections: [SectionModel] = []
 
     // MARK: - Life Cycle
 
@@ -72,6 +78,7 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
 
         currentPage = 1
         sections = []
+        state = .loading
         loadData(query: searchText, page: currentPage)
     }
 
@@ -92,6 +99,7 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
         let thresholdIndex = section.items.count - 5
         if currentItemIndex >= max(0, thresholdIndex) {
             currentPage += 1
+            state = .loadingMore
             loadData(query: searchText, page: currentPage)
         }
     }
@@ -105,7 +113,6 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
         }
 
         let aspectRatio = CGFloat(imageHeight) / CGFloat(imageWidth)
-
         let descriptionHeight = calculateDescriptionHeight(for: photo.description ?? "", width: screenWidth - 20)
 
         return screenWidth * aspectRatio + descriptionHeight + 15
@@ -114,14 +121,12 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
     private func calculateDescriptionHeight(for text: String, width: CGFloat) -> CGFloat {
         let font = UIFont.systemFont(ofSize: 14)
         let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
-
         let boundingBox = text.boundingRect(
             with: constraintRect,
             options: .usesLineFragmentOrigin,
             attributes: [.font: font],
             context: nil
         )
-
         return ceil(boundingBox.height)
     }
 
@@ -129,6 +134,7 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
 
     private func loadData(query: String, page: Int) {
         isLoading = true
+        state = .loading
 
         searchService.searchImages(query: query, page: page) { [weak self] result in
             guard let self = self else { return }
@@ -139,13 +145,17 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
                 let photoModels = searchResult.results
                 let itemHeights = photoModels.map { self.calculateCellHeight(for: $0) }
                 let section = SectionModel(items: photoModels, itemHeights: itemHeights)
+                self.totalPages = searchResult.totalPages
+
+                self.sections.append(section)
 
                 DispatchQueue.main.async {
-                    self.totalPages = searchResult.totalPages
-                    self.sections.append(section)
+                    self.state = .content(self.sections)
                 }
             case .failure(let error):
-                print(error.localizedDescription)
+                DispatchQueue.main.async {
+                    self.state = .error(error.localizedDescription)
+                }
             }
         }
     }
