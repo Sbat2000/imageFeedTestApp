@@ -143,6 +143,14 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
             switch result {
             case .success(let searchResult):
                 let photoModels = searchResult.results
+                
+                if searchResult.total == 0 {
+                    DispatchQueue.main.async {
+                        self.state = .error("\(LocalizableStrings.notFound) \"\(query)\".")
+                    }
+                    return
+                }
+
                 let itemHeights = photoModels.map { self.calculateCellHeight(for: $0) }
                 let section = SectionModel(items: photoModels, itemHeights: itemHeights)
                 self.totalPages = searchResult.totalPages
