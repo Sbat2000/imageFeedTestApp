@@ -9,7 +9,8 @@ import Foundation
 
 struct UnsplashSearchRequest: NetworkRequest {
     let endpoint: URL?
-    let headers: [String: String]? = ["Authorization": "Client-ID sNAiwNG8bsDXRSdLn-0QTHy4zA3H3qemE4GOjrJb-Yc"]
+    // TODO: Вставьте сюда ваш API ключ
+    let headers: [String: String]? = ["Authorization": "Client-ID Your apikey"]
 
     init(query: String, page: Int) {
         var components = URLComponents(string: "https://api.unsplash.com/search/photos")
