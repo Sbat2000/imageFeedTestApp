@@ -50,7 +50,7 @@
 1. Клонируйте репозиторий:
 
    ```bash
-   git clone https://github.com/username/ImageFeedTestApp.git
+   git clone https://github.com/Sbat2000/ImageFeedTestApp.git
 
 2. Откройте проект в Xcode:
 3. 
