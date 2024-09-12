@@ -8,8 +8,8 @@
 import UIKit
 
 struct SectionModel {
-    let items: [PhotoModel]
-    let itemHeights: [CGFloat]
+    var items: [PhotoModel]
+    var itemHeights: [CGFloat]
 }
 
 enum MainViewState {
@@ -147,7 +147,12 @@ final class MainScreenViewModel: MainScreenViewModelProtocol {
                 let section = SectionModel(items: photoModels, itemHeights: itemHeights)
                 self.totalPages = searchResult.totalPages
 
-                self.sections.append(section)
+                if self.sections.isEmpty {
+                    self.sections.append(section)
+                } else {
+                    self.sections[0].items.append(contentsOf: photoModels)
+                    self.sections[0].itemHeights.append(contentsOf: itemHeights)
+                }
 
                 DispatchQueue.main.async {
                     self.state = .content(self.sections)
